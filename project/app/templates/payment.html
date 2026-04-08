@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body{
+            height:100vh;
+            overflow:hidden;
+        }
+
+        /* ======= TOP HEADER ======= */
+        .topbar{
+            height:70px;
+            background:#3f5873;
+            color:white;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:0 25px;
+        }
+
+        .admin-info{
+            display:flex;
+            align-items:center;
+            gap:15px;
+        }
+
+        .admin-img{
+            width:45px;
+            height:45px;
+            border-radius:50%;
+            object-fit:cover;
+            border:2px solid white;
+        }
+
+        .logout-btn{
+            color:#00bfff;
+            font-weight:bold;
+            text-decoration:none;
+        }
+
+        /* ======= MAIN LAYOUT ======= */
+        .container{
+            display:flex;
+            height:calc(100vh - 70px);
+        }
+
+        /* ======= SIDEBAR ======= */
+        .sidebar{
+            width:250px;
+            background:#4a637d;
+            padding-top:20px;
+        }
+
+        .sidebar a{
+            display:block;
+            color:white;
+            padding:15px 20px;
+            text-decoration:none;
+            border-bottom:1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar a:hover{
+            background:#3b5168;
+        }
+
+        /* ======= CONTENT AREA ======= */
+        .content{
+            flex:1;
+            background:#e6e6e6;
+            padding:30px;
+            overflow:auto;
+        }
+
+        .content h2{
+            margin-bottom:10px;
+        }
+
+        .title{
+            text-align: center;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <div class="topbar">
+        <div class="admin-info">
+            <img src="{% static data.image %}" alt="Admin" class="admin-img">
+            <h2>Welcome {{ data.name }}</h2>
+        </div>
+
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+
+    <h1 class="title">Proceed for paymennt 🤑</h1>
+    <br>
+
+    <div>
+
+        <form action="{% url 'pay_amount' %}" method="post" class="title">
+            {% csrf_token %}
+            <label for="">Item name</label>:
+            <input type="text" name="itemname" value="{{ amount1 }}">
+            <br>
+            <br>
+            <label for="">Item price</label>:
+            {% if not payment %}
+            <input type="number" name="itemprice" value="{{item_details.Item_price}}" >
+            {% else %} 
+            <input type="number" name="itemprice" value="{{amount}}" >
+            {% endif %}
+            <br>
+            <br>
+            <button type="submit">Pay Now</button>
+        </form>
+
+            <br>
+        {% if payment %}
+        <form action="{% url 'success' %}" method="post">
+             {% csrf_token %} 
+             <script src="https://checkout.razorpay.com/v1/checkout.js" data-key="rzp_test_pr99iascS1WRtU"
+              data-amount="{{ payment.amount }}"
+               data-currency="{{ payment.currency }}" 
+               data-order_id="{{ payment.id }}" 
+               data-buttontext="Pay with Razorpay"
+                data-name="Neeraj Ecom" 
+                data-description="Thanku for visiting My Site"
+                 data-image="https://example.com/your_logo.jpg" 
+                 data-prefill.name="Neeraj Kumar" 
+                 data-prefill.email="Neeraj.Patel@gmail.com"
+                 data-theme.color="#2520adff" >
+
+             </script> <input type="hidden" custom="Hidden Element" name="hidden">
+             </form>
+             {% endif %}
+
+        
+    </div>
