@@ -2,6 +2,7 @@
 from django.shortcuts import render , redirect 
 from .models import *
 from django.contrib import messages
+from django.db.models import Q 
 from django.core.mail import send_mail
 from django.views.decorators.cache import never_cache
 import razorpay
@@ -414,19 +415,30 @@ def show_items(req):
     else:
         return redirect('login')
     
-def paynow(req):
+def paynow(req, pk):
     if 'a_data' in req.session:
         a_data = req.session.get('a_data')
-        item_details = Item.objects.filter(id=pk)
-        return render(req,'payment.html',{'data':a_data,'item_details':item_details}) 
+
+        item_details = Item.objects.get(id=pk)
+
+        return render(
+            req,
+            'payment.html',
+            {
+                'data': a_data,
+                'item_details': item_details
+            }
+        )
     else:
         return redirect('login')
-    import razorpay 
+
+    
 
 
-def pay_amount(req):
+def pay_amount(req,pk):
     # if 'a_data' in req.session:
         if req.method == 'POST':
+            item_details = Item.objects.get(id=pk)
             amount1 = req.POST.get('itemprice')  
             print(type(amount1))
             amount = float(amount1)*100
@@ -438,7 +450,7 @@ def pay_amount(req):
                 order_id = payment.get('id'),
                 amount = int(amount1)
             )
-            return render(req,'payment.html',{'payment':payment,'amount':amount1})
+            return render(req,'payment.html',{'payment':payment,'amount':amount1,'item_details': item_details})
         
 def pay_status(req):
     print(req.post)

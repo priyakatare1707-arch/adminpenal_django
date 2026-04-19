@@ -1,401 +1,550 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Admin Dashboard</title>
-    <style>
+<title>Admin Dashboard</title>
 
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family: Arial, Helvetica, sans-serif;
-        }
+<!-- Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        body{
-            height:100vh;
-            overflow:hidden;
-        }
+<!-- Bootstrap Icons -->
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
-        /* ======= TOP HEADER ======= */
-        .topbar{
-            height:70px;
-            background:#3f5873;
-            color:white;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            padding:0 25px;
-        }
+<style>
 
-        .admin-info{
-            display:flex;
-            align-items:center;
-            gap:15px;
-        }
+body{
+height:100vh;
+overflow:hidden;
+}
 
-        .admin-img{
-            width:45px;
-            height:45px;
-            border-radius:50%;
-            object-fit:cover;
-            border:2px solid white;
-        }
+/* Topbar */
+.topbar{
+height:70px;
+background:#3f5873;
+color:white;
+}
 
-        .logout-btn{
-            color:#00bfff;
-            font-weight:bold;
-            text-decoration:none;
-        }
+/* Sidebar */
+.sidebar{
+width:250px;
+background:#4a637d;
+height:calc(100vh - 70px);
+}
 
-        /* ======= MAIN LAYOUT ======= */
-        .container{
-            display:flex;
-            height:calc(100vh - 70px);
-        }
+.sidebar a{
+display:block;
+color:white;
+padding:14px 20px;
+text-decoration:none;
+border-bottom:1px solid rgba(255,255,255,0.1);
+}
 
-        /* ======= SIDEBAR ======= */
-        .sidebar{
-            width:250px;
-            background:#4a637d;
-            padding-top:20px;
-        }
+.sidebar a:hover{
+background:#3b5168;
+}
 
-        .sidebar a{
-            display:block;
-            color:white;
-            padding:15px 20px;
-            text-decoration:none;
-            border-bottom:1px solid rgba(255,255,255,0.1);
-        }
+/* Profile Image */
+.admin-img{
+width:45px;
+height:45px;
+border-radius:50%;
+object-fit:cover;
+border:2px solid white;
+}
 
-        .sidebar a:hover{
-            background:#3b5168;
-        }
+/* Content */
+.content{
+flex:1;
+background:#f5f6fa;
+padding:30px;
+overflow:auto;
+}
 
-        /* ======= CONTENT AREA ======= */
-        .content{
-            flex:1;
-            background:#e6e6e6;
-            padding:30px;
-            overflow:auto;
-        }
+</style>
 
-        .content h2{
-            margin-bottom:10px;
-        }
-
-    </style>
 </head>
 
 <body>
 
-    <!-- ===== HEADER ===== -->
-    <div class="topbar">
-        <div class="admin-info">
-            <img src="{% static data.image %}" alt="Admin" class="admin-img">
-            <h2>Welcome {{ data.name }}</h2>
-        </div>
+<!-- ================= TOPBAR ================= -->
 
-        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
-    </div>
+<div class="topbar d-flex justify-content-between align-items-center px-4">
 
-    <!-- ===== MAIN SECTION ===== -->
-    <div class="container">
+<div class="d-flex align-items-center gap-3">
 
-        <!-- SIDEBAR -->
-        <div class="sidebar">
-            <a href="{% url 'add_dep' %}">Add Department</a>
-            <a href="{% url 'show_dep' %}">Show Department</a>
-            <a href="{% url 'add_emp' %}">Add Employee</a>
-            <a href="{% url 'show_emp' %}">Show Employee</a>
-            <a href="{% url 'emp_all_query' %}">Employee Query</a>
-            <a href="#">Profile</a>
-            <a href="{% url 'add_item' %}">Add Item</a>
-            <a href="{% url 'show_items' %}">Show Item</a>
-        </div>
+{% if data.image %}
+<img src="{{ data.image.url }}" class="admin-img">
+{% else %}
+<img src="{% static 'image/admin.jpg' %}" class="admin-img">
+{% endif %}
 
-        <!-- CONTENT -->
-        <div class="content">
-            {% comment %} <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"> {% endcomment %}
-            <h2>Dashboard Content Area</h2>
-            <p>Yaha aapka form ya data show hoga.</p>
-            {% if messages %}
-               {% for message in messages %}
-               {{message}}
-               {% endfor %}
-            {% endif %}
-            {% if add_dep %}
-            <div class="container mt-5">
-                <div class="row justify-content-center">
-                    <div class="col-md-6">
-                        <div class="card shadow">
-                            <div class="card-header bg-primary text-white text-center">
-                                <h4>Add Department</h4>
-                            </div>
-                            <div class="card-body">
-                                <form action="{% url 'save_dep' %}" method="post">
-                                    {% csrf_token %}
 
-                                    <!-- Department Name -->
-                                    <div class="mb-3">
-                                        <label class="form-label">Department Name</label>
-                                        <input type="text" name="dep_name" class="form-control" placeholder="Enter department name" required>
-                                    </div>
+<h5 class="mb-0">
+Welcome {{ data.name }}
+</h5>
 
-                                    <!-- Department Description -->
-                                    <div class="mb-3">
-                                        <label class="form-label">Department Description</label>
-                                        <textarea name="dep_desc" class="form-control" rows="3" placeholder="Enter description" required></textarea>
-                                    </div>
+</div>
 
-                                    <!-- Department Head -->
-                                    <div class="mb-3">
-                                        <label class="form-label">Department Head</label>
-                                        <input type="text" name="dep_head" class="form-control" placeholder="Enter department head name" required>
-                                    </div>
+<a href="{% url 'logout' %}"
+class="btn btn-light btn-sm">
+<i class="bi bi-box-arrow-right"></i> Logout
+</a>
 
-                                    <!-- Submit Button -->
-                                    <div class="d-grid">
-                                        <button type="submit" class="btn btn-success">
-                                            Submit
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+</div>
 
-            {% elif show_dep %}
-                <table border="1">
-                    <thead>
-                        <tr>
-                            <th>S.No</th>
-                            <th>Dep Name</th>
-                            <th>Dep Desc</th>
-                            <th>Dep Head</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
-                       
-                        </tr>
+<!-- ================= MAIN ================= -->
 
-                    </thead>
-                    <tbody>
-                        {% for i in all_dept %}
-                        <tr>
-                            <td>{{forloop.counter}}</td>
-                            <td>{{i.Dep_name}}</td>
-                            <td>{{i.Dep_desc}}</td>
-                            <td>{{i.Dep_head}}</td>
-                            <td><a href="#"><button type="submit">Edit</button></a></td>
-                            <td><a href="#"><button type="submit">Delete</button></a></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+<div class="d-flex">
 
-            {% elif add_emp %}
-                <form action="{% url 'save_emp' %}" method="post" enctype="multipart/form-data" class="p-4 border rounded shadow-sm bg-light">
-                    {% csrf_token %}
+<!-- ================= SIDEBAR ================= -->
 
-                    <div class="mb-3">
-                        <label class="form-label">Employee Name</label>
-                        <input type="text" name="name" class="form-control" placeholder="Enter employee name">
-                    </div>
+<div class="sidebar">
 
-                    <div class="mb-3">
-                        <label class="form-label">Employee Contact</label>
-                        <input type="tel" name="contact" class="form-control" placeholder="Enter contact number">
-                    </div>
+<a href="{% url 'add_dep' %}">
+<i class="bi bi-building"></i> Add Department
+</a>
 
-                    <div class="mb-3">
-                        <label class="form-label">Employee Email</label>
-                        <input type="email" name="email" class="form-control" placeholder="Enter email address">
-                    </div>
+<a href="{% url 'show_dep' %}">
+<i class="bi bi-table"></i> Show Department
+</a>
 
-                    <div class="mb-3">
-                        <label class="form-label">Employee Department</label>
-                        <select name="dept" class="form-select">
-                            <option value="">Select Department</option>
-                            {% for i in all_dept %}
-                            <option value="{{i.Dep_name}}">{{i.Dep_name}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+<a href="{% url 'add_emp' %}">
+<i class="bi bi-person-plus"></i> Add Employee
+</a>
 
-                    <div class="mb-3">
-                        <label class="form-label">Employee Code</label>
-                        <input type="text" name="code" class="form-control" placeholder="Enter employee code">
-                    </div>
+<a href="{% url 'show_emp' %}">
+<i class="bi bi-people"></i> Show Employee
+</a>
 
-                    <div class="mb-3">
-                        <label class="form-label">Employee Image</label>
-                        <input type="file" name="image" class="form-control">
-                    </div>
+<a href="{% url 'emp_all_query' %}">
+<i class="bi bi-chat-dots"></i> Employee Query
+</a>
 
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">
-                            Add Employee
-                        </button>
-                    </div>
-                </form>
 
-            {% elif show_emp %}
 
-                <table border="1">
-                    <thead>
-                        <tr>
-                            <th>S.No.</th>
-                            <th>Employee Name</th>
-                            <th>Employee Dept</th>
-                            <th>Employee Email</th>
-                            <th>Employee Contact</th>
-                            <th>Employee Code</th>
-                        </tr>
-                    </thead>
+<a href="{% url 'add_item' %}">
+<i class="bi bi-bag-plus"></i> Add Item
+</a>
 
-                    <tbody>
-                        {% for emp in emp_data %}
-                        <tr>
-                            <td>{{forloop.counter}}</td>
-                            <td>{{emp.Name}}</td>
-                            <td>{{emp.Dept}}</td>
-                            <td>{{emp.Email}}</td>
-                            <td>{{emp.Contact}}</td>
-                            <td>{{emp.Code}}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            
-            {% elif emp_all_query %}
-            <div>
-                All Query
-                <table border="1">
-                    <thead>
-                        <tr>
-                            <th>S.No</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Depatment</th>
-                            <th>Query</th>
-                            <th>Status</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
-                            <th>Reply</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for i in emp_all_query %}
-                        <tr>
-                            <td>{{forloop.counter}}</td>
-                            <td>{{i.Name}}</td>
-                            <td>{{i.Email}}</td>
-                            <td>{{i.Dept}}</td>
-                            <td>{{i.Query}}</td>
-                            <td>
-                                {% if i.Reply %}
-                                    Done
-                                {% else %}
-                                    {{i.Status}}
-                                {% endif %}
-                            </td>
-                            <td>{% if i.Reply %}
-                                    NA
-                                {% else %}
-                                    Edit
-                                {% endif %}
-                            </td>
-                            <td>{% if i.Reply %}
-                                    NA
-                                {% else %}
-                                    Delete
-                                {% endif %}</td>
-                            {% comment %} <td><a href="{% url 'reply' pk=i.id %}" >Reply</a></td> {% endcomment %}
-                            {% comment %} <td>{{i.Reply}}</td> {% endcomment %}
-                            <td>
-                                {% if i.Reply %}
-                                    {{i.Reply}}
-                                {% else %}
-                                <a href="{% url 'reply' pk=i.id %}">Reply</a>
-                                {% endif %}    
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+<a href="{% url 'show_items' %}">
+<i class="bi bi-bag"></i> Show Item
+</a>
 
-                {% if q_data %}
-                <form action="{% url 'a_reply' pk=q_data.id %}" method="post">
-                    {% csrf_token %}
-                    Name: <input type="text" name="name" value="{{q_data.Name}}" id=""><br><br>
-                    Email: <input type="email" name="email" value="{{q_data.Email}}" id=""><br><br>
-                    Dept: <input type="text" name="dep_name" value="{{q_data.Dept}}" id=""><br><br>
-                    Query: <input type="text" name="query" value="{{q_data.Query}}" id=""><br><br>
-                    Reply: <input type="text" name="reply" value="" id=""><br><br>
-                    <button type="submit">a_reply</button>
-                </form>
-                {% endif %}
+</div>
 
-            </div>
+<!-- ================= CONTENT ================= -->
 
-            {% elif add_item %}
-            <h2>Add Item</h2>
+<div class="content">
 
-            <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
+<h3 class="mb-3">
+Dashboard Content Area
+</h3>
 
-            <label>Item Name</label><br>
-            <input type="text" name="item_name"><br><br>
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-success">
+{{message}}
+</div>
+{% endfor %}
+{% endif %}
 
-            <label>Item Description</label><br>
-            <textarea name="item_desc"></textarea><br><br>
+<!-- ================= ADD DEP ================= -->
 
-            <label>Item Price</label><br>
-            <input type="number" name="item_price"><br><br>
+{% if add_dep %}
 
-            <label>Item Image</label><br>
-            <input type="file" name="item_image"><br><br>
+<div class="card shadow col-md-6 mx-auto">
 
-            <label>Item Color</label><br>
-            <input type="text" name="item_color"><br><br>
+<div class="card-header bg-primary text-white">
+Add Department
+</div>
 
-            <label>Item Category</label><br>
-            <input type="text" name="item_category"><br><br>
+<div class="card-body">
 
-            <label>Item Quantity</label><br>
-            <input type="number" name="item_quantity"><br><br>
+<form action="{% url 'save_dep' %}" method="post">
 
-            <button type="submit">Add Item</button>
+{% csrf_token %}
 
-            </form>
-            {% elif show_items %} 
-                {% for i in all_items %}
-                <form action="{% url 'paynow' pk=i.id %}" method="post">
-                    {% csrf_token %}
-                    <div class="card" style="width: 18rem;">
-                       <img src="{{ i.Item_image }}" class="card-img-top">
+<div class="mb-3">
+<label>Department Name</label>
+<input type="text" name="dep_name" class="form-control">
+</div>
 
-                        <div class="card-body">
-                            <h5 class="card-title">{{i.Item_name}}</h5>
-                            <p class="card-text">{{i.Item_desc}}</p>
-                            <p class="card-text">{{i.Item_price}}</p>
-                            <p class="card-text">{{i.Item_color}}</p>
-                            <p class="card-text">{{i.Item_category}}</p>
+<div class="mb-3">
+<label>Description</label>
+<textarea name="dep_desc" class="form-control"></textarea>
+</div>
 
-                            <button type="submit" class="btn btn-primary">Pay Now</button> 
-                            </form>  
-                        </div> 
-                    </div>
-                {% endfor %}
-            {% endif %}
+<div class="mb-3">
+<label>Department Head</label>
+<input type="text" name="dep_head" class="form-control">
+</div>
 
-        </div>
+<button class="btn btn-success w-100">
+Submit
+</button>
 
-    </div>
+</form>
+
+</div>
+
+</div>
+
+{% elif show_dep %}
+
+<table class="table table-bordered table-striped">
+
+<thead class="table-dark">
+
+<tr>
+<th>S.No</th>
+<th>Dep Name</th>
+<th>Dep Desc</th>
+<th>Dep Head</th>
+<th>Edit</th>
+<th>Delete</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for i in all_dept %}
+
+<tr>
+
+<td>{{forloop.counter}}</td>
+<td>{{i.Dep_name}}</td>
+<td>{{i.Dep_desc}}</td>
+<td>{{i.Dep_head}}</td>
+
+<td>
+<button class="btn btn-warning btn-sm">
+Edit
+</button>
+</td>
+
+<td>
+<button class="btn btn-danger btn-sm">
+Delete
+</button>
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% elif add_emp %}
+
+<div class="card shadow col-md-8">
+
+<div class="card-body">
+
+<form action="{% url 'save_emp' %}"
+method="post"
+enctype="multipart/form-data">
+
+{% csrf_token %}
+
+<div class="mb-3">
+<label>Name</label>
+<input type="text" name="name" class="form-control">
+</div>
+
+<div class="mb-3">
+<label>Contact</label>
+<input type="text" name="contact" class="form-control">
+</div>
+
+<div class="mb-3">
+<label>Email</label>
+<input type="email" name="email" class="form-control">
+</div>
+
+<div class="mb-3">
+<label>Department</label>
+
+<select name="dept" class="form-select">
+
+<option>Select Department</option>
+
+{% for i in all_dept %}
+<option value="{{i.Dep_name}}">
+{{i.Dep_name}}
+</option>
+{% endfor %}
+
+</select>
+
+</div>
+
+<div class="mb-3">
+<label>Code</label>
+<input type="text" name="code" class="form-control">
+</div>
+
+<div class="mb-3">
+<label>Image</label>
+<input type="file" name="image" class="form-control">
+</div>
+
+<button class="btn btn-primary">
+Add Employee
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+{% elif show_emp %}
+
+<table class="table table-bordered table-striped">
+
+<thead class="table-dark">
+
+<tr>
+<th>S.No</th>
+<th>Name</th>
+<th>Dept</th>
+<th>Email</th>
+<th>Contact</th>
+<th>Code</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for emp in emp_data %}
+
+<tr>
+
+<td>{{forloop.counter}}</td>
+<td>{{emp.Name}}</td>
+<td>{{emp.Dept}}</td>
+<td>{{emp.Email}}</td>
+<td>{{emp.Contact}}</td>
+<td>{{emp.Code}}</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% elif emp_all_query %}
+
+<h4>Employee Queries</h4>
+
+<table class="table table-bordered table-striped">
+
+<thead class="table-dark">
+
+<tr>
+<th>S.No</th>
+<th>Name</th>
+<th>Email</th>
+<th>Department</th>
+<th>Query</th>
+<th>Status</th>
+<th>Reply</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for i in emp_all_query %}
+
+<tr>
+
+<td>{{forloop.counter}}</td>
+<td>{{i.Name}}</td>
+<td>{{i.Email}}</td>
+<td>{{i.Dept}}</td>
+<td>{{i.Query}}</td>
+
+<td>
+{% if i.Reply %}
+Done
+{% else %}
+{{i.Status}}
+{% endif %}
+</td>
+
+<td>
+
+{% if i.Reply %}
+{{i.Reply}}
+{% else %}
+<a href="{% url 'reply' pk=i.id %}"
+class="btn btn-sm btn-primary">
+Reply
+</a>
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% elif add_item %}
+
+<div class="card shadow col-md-8 mx-auto">
+
+<div class="card-header bg-success text-white">
+Add Item
+</div>
+
+<div class="card-body">
+
+<form method="POST"
+enctype="multipart/form-data">
+
+{% csrf_token %}
+
+<div class="row">
+
+<div class="col-md-6 mb-3">
+<label>Item Name</label>
+<input type="text"
+name="item_name"
+class="form-control">
+</div>
+
+<div class="col-md-6 mb-3">
+<label>Item Price</label>
+<input type="number"
+name="item_price"
+class="form-control">
+</div>
+
+<div class="col-md-12 mb-3">
+<label>Description</label>
+<textarea name="item_desc"
+class="form-control"></textarea>
+</div>
+
+<div class="col-md-6 mb-3">
+<label>Color</label>
+<input type="text"
+name="item_color"
+class="form-control">
+</div>
+
+<div class="col-md-6 mb-3">
+<label>Category</label>
+<input type="text"
+name="item_category"
+class="form-control">
+</div>
+
+<div class="col-md-6 mb-3">
+<label>Quantity</label>
+<input type="number"
+name="item_quantity"
+class="form-control">
+</div>
+
+<div class="col-md-6 mb-3">
+<label>Image</label>
+<input type="file"
+name="item_image"
+class="form-control">
+</div>
+
+</div>
+
+<button class="btn btn-success w-100">
+Add Item
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+{% elif show_items %}
+
+<div class="row">
+
+{% for i in all_items %}
+
+<div class="col-md-4 mb-4">
+
+<form action="{% url 'paynow' i.id %}" method="post">
+
+{% csrf_token %}
+
+<div class="card shadow h-100">
+
+{% if i.Item_image %}
+<img src="{{ i.Item_image.url }}"
+class="card-img-top"
+style="height:200px; object-fit:cover;">
+{% else %}
+<img src="{% static 'images/no-image.png' %}"
+class="card-img-top"
+style="height:200px; object-fit:cover;">
+{% endif %}
+
+<div class="card-body">
+
+<h5>{{i.Item_name}}</h5>
+
+<p>{{i.Item_desc}}</p>
+
+<p class="fw-bold">
+₹ {{i.Item_price}}
+</p>
+
+<p>
+Color: {{i.Item_color}}
+</p>
+
+<p>
+Category: {{i.Item_category}}
+</p>
+
+<button class="btn btn-primary w-100">
+Pay Now
+</button>
+
+</div>
+
+</div>
+
+</form>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endif %}
+
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
+
 </html>

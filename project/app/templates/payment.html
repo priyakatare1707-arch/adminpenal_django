@@ -109,7 +109,7 @@
 
     <div>
 
-        <form action="{% url 'pay_amount' %}" method="post" class="title">
+        <form action="{% url 'pay_amount' item_details.id %}" method="post">
             {% csrf_token %}
             <label for="">Item name</label>:
             <input type="text" name="itemname" value="{{ amount1 }}">

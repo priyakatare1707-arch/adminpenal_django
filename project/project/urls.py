@@ -54,7 +54,7 @@ urlpatterns = [
     path('admindashboard/show_items/',show_items,name='show_items'),
     path('admindashboard/show_items/paynow/<int:pk>/',paynow,name='paynow'),
    
-    path('pay_amount/',pay_amount,name='pay_amount'),
+    path('pay_amount/<int:pk>/',pay_amount,name='pay_amount'),
      path('success/',success,name='success')
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
